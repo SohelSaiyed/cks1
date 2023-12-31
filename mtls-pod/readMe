@@ -1,0 +1,12 @@
+# create certificatsigningrequest:
+kubectl create -f tls-svc-csr.yml
+
+# View the status of the request.
+kubectl get csr
+
+#Approve the request.
+kubectl certificate approve tls-svc-csr
+
+#Retrieve the signed certificate data.
+kubectl get csr tls-svc-csr -o yaml  
+kubectl get csr tls-svc-csr -o jsonpath='{.status.certificate}' | base64 --decode

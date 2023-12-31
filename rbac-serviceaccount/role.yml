@@ -1,0 +1,27 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-operations-clusterrole
+  namespace: k97
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list","create", "delete"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["list"]
+
+
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: serviceaccount-pod-clusterrolebinding
+  namespace: k97
+subjects:
+- kind: ServiceAccount
+  name: sa-pod-api
+roleRef:
+  kind: ClusterRole
+  name: pod-operations-clusterrole
+  apiGroup: rbac.authorization.k8s.io

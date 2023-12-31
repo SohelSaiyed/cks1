@@ -1,0 +1,27 @@
+apiVersion: audit.k8s.io/v1 # This is required.
+kind: Policy
+# Don't generate audit events for all requests in RequestReceived stage.
+omitStages:
+  - "RequestReceived"
+rules:
+  # Log changes to Namespaces at the RequestResponse level. 
+  - level: RequestResponse
+    resources:
+    - group: ""
+      resources: ["namespaces"]
+  # Log pod changes in the test Namespace at Request level 
+  - level: Request
+    resources:
+    - group: ""
+      resources: ["pods"]
+    namespaces: ["test"]
+  # Log all ConfigMap and Secret changes at the Metadata level.
+  - level: Metadata
+    resources:
+    - group: ""
+      resources: ["secrets"]
+  # log node related audits, level RequestResponse
+- level: RequestResponse
+  userGroups: ["system:nodes"]
+    #catch-all 
+  - level: Metadata # no resources provided, log all request at metadata level.  

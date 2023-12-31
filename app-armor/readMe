@@ -1,0 +1,14 @@
+#copy profile file to worker node:
+scp /opt/course/9/profile cluster1-node1:~/
+
+# install the profile:
+apparmor_parser -q ./<filename>
+
+#check profile installed:
+apparmor_status
+
+# label a node:
+k label node cluster1-node1 security=apparmor
+
+# create deploy for the deployment:
+k create deploy apparmor --image=nginx:1.19.2 $do > 9_deploy.yaml

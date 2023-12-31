@@ -1,0 +1,42 @@
+# remove kube-apiserver expose to external 
+1. remove the following line from: /etc/kubernetes/manifest/kube-apiserver.yaml
+#    - --kubernetes-service-node-port=31000   # delete or set to 0
+2. delete existing svc of kubernetes apiserver
+
+# to verify 
+ps aux | grep kube-apiserver | grep node-port
+
+
+# to make secure kubernetes-dashboard
+1. first take copy of existing deploy of dashboard
+k -n kubernetes-dashboard get deploy kubernetes-dashboard -oyaml > 8_deploy_kubernetes-dashboard.yaml
+2. make changes in the deployment.yaml
+    spec:
+      containers:
+        - --authentication-mode=token        # change or delete, "token" is default
+        - --auto-generate-certificates       # add
+        #- --enable-skip-login=true          # delete or set to false
+        #- --enable-insecure-login           # delete
+
+3. edit svc:
+   - take backup: 
+   k -n kubernetes-dashboard get svc kubernetes-dashboard -o yaml > 8_svc_kubernetes-dashboard.yaml # backup   
+   k -n kubernetes-dashboard edit svc kubernetes-dashboard
+# and remove
+ spec:
+  externalTrafficPolicy: Cluster   # delete
+# remove all nodePort
+# and change:   type: ClusterIP                  # change or delete
+
+# to protect syscall
+# check the container id from via podname:
+crictl pods --name collector1
+crictl ps --pod 21aacb8f4ca8d
+# check the args for the running container:
+crictl inspect 9ea02422f8660 | grep args -A1
+
+# check process id:process PIDs 
+ps aux | grep collector1-process
+
+# Using the PIDs we can call strace to find Sycalls
+strace -p 35039

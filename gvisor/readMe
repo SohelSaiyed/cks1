@@ -1,0 +1,15 @@
+#check runsc installed:
+runsc --version
+
+# verify config:
+cat /etc/containerd/config.toml | grep runsc
+
+#dry run the pod:
+k -n team-purple run gvisor-test --image=nginx:1.19.2 $do > 10_pod.yaml
+# and add following line:
+spec:
+  nodeName: cluster1-node2 # add
+  runtimeClassName: gvisor   # add
+
+#chech po running on gvisor or not 
+kubectl exec non-sandbox-pod -- dmesg 

@@ -1,0 +1,56 @@
+#cluster_upgrade
+1. drain cplane_node:
+k drain cluster3-controlplane1 --ignore-daemonsets
+2. ssh to cplane_node: ssh cluster3-controlplane1
+3. check exiting version:
+kubelet --version
+kubeadm version
+4. update client version:
+apt-mark unhold kubeadm
+apt-mark hold kubectl kubelet
+apt install kubeadm=1.28.2-00
+apt-mark hold kubeadm
+5. plan cluster upgrade on master node:
+kubeadm upgrade plan
+
+6. apply upgrade: 
+kubeadm upgrade apply v1.28.2
+7. version upgrade on master is done:
+kubeadm upgrade plan
+
+8. update kubelet and kubectl
+apt update
+apt-mark unhold kubelet kubectl
+apt install kubelet=1.28.2-00 kubectl=1.28.2-00
+# mark hold:
+apt-mark hold kubelet kubectl
+
+# restart service:
+service kubelet restart
+
+k uncordon cluster3-controlplane1
+
+# upgrade worker nodes:::::
+
+1. k drain cluster3-node1 --ignore-daemonsets
+
+2. update version: 
+apt update 
+apt-mark unhold kubeadm
+apt-mark hold kubectl kubelet
+apt install kubeadm=1.28.2-00
+#hold kubeadm:
+apt-mark hold kubeadm
+
+#upgrade version:
+kubeadm upgrade node
+
+# uphold kubelet & kubectl
+apt-mark unhold kubectl kubelet
+
+apt install kubelet=1.28.2-00 kubectl=1.28.2-00
+
+# restart service
+service kubelet restart
+
+k uncordon cluster3-node1

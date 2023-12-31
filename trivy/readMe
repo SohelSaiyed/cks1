@@ -1,0 +1,8 @@
+# scan image:
+trivy nginx:1.16.1-alpine 
+
+#scan for high and crictal:
+trivy image --severity HIGH,CRITICAL ruby:2.4.0
+
+# Image with hash
+`image: imageName:tag@sha256:hash`

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+spec:
+  containers:
+  - name: myapp
+    image: <Image>
+    securityContext:
+      readOnlyRootFilesystem: true # container not able to write to its file system, which make it imutable container
+    volumeMounts: # if application need file system to write than workaround for imutable pod. 
+    - name: cache
+      mountPath: /var/cache/nginx
+    - name: run 
+      mountPath: /var/run 
+  volumeMounts:
+  - name: cache
+    emptyDir: {}
+  - name: run 
+    emptyDir: {}

@@ -1,0 +1,22 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: operations-clusterrole
+rules:
+- apiGroups: [""]
+  resources: ["pods", "configmaps", "secrets"]
+  verbs: ["list", "watch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: serviceaccount-operations-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: sa-api
+  namespace: k97
+roleRef:
+  kind: ClusterRole
+  name: operations-clusterrole
+  apiGroup: rbac.authorization.k8s.io

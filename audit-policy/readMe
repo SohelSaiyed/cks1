@@ -1,0 +1,39 @@
+# Configuring the audit-policy
+1. create audit policy at: /etc/kubernetes/audit-policy.yml
+2. configure kube-apiserver file: 
+  # add following lines
+    - command:    
+      - kube-apiserver     
+      - --audit-policy-file=/etc/kubernetes/audit-policy.yaml     
+      - --audit-log-path=/var/log/k8s-audit/k8s-audit.log     
+      - --audit-log-maxage=30    
+      - --audit-log-maxbackup=10
+
+  # ADD volume for audit-policy and audit output logs file
+    volumes:   
+      - name: audit-config     
+        hostPath:      
+          path: /etc/kubernetes/audit-policy.yaml       
+          type: File   
+      - name: audit-log     
+        hostPath:      
+          path: /var/log/k8s-audit       
+          type: DirectoryOrCreate
+
+   # mount Volume 
+       volumeMounts:     
+       - name: audit-config       
+         mountPath: /etc/kubernetes/audit-policy.yaml
+         readOnly: true     
+       - name: audit-log       
+         mountPath: /var/log/k8s-audit       
+         readOnly: false # because log need write access
+
+3. check audit-log:
+sudo tail -f /var/log/k8s-audit/k8s-audit.log
+
+or
+cat audit.log | tail | jq
+
+#investigate audit.log
+cat audit.log | grep "p.auster" | grep Secret | grep list | wc -l

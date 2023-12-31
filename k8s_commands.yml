@@ -1,0 +1,44 @@
+#create secret:
+kubectl create secret generic my-secret1 --from-literal=username=user1 --from-literal=password=dontknow -n test
+
+#get secret data:
+kubectl get secret my-secret1 -o jsonpath='{.data}'
+
+#create service-account
+kubectl create sa -n test
+
+#create tls-ingress secret
+kubectl create secret tls accounting-secret --cert=accounting.crt --key=accounting.key -n t75
+
+#recreate existing secret
+kubectl -n one get secrets -o json | kubectl replace -f -
+
+# access secret using etcd
+ETCDCTL_API=3 etcdctl --cert /etc/kubernetes/pki/apiserver-etcd-client.crt --key /etc/kubernetes/pki/apiserver-etcd-client.key --cacert /etc/kubernetes/pki/etcd/ca.crt get /registry/secrets/one/s1
+
+#force re-apply yaml
+k -f /opt/ks/pod-one.yaml apply
+
+# check mount of sa on the pod
+kubectl -n one exec -it pod-one -- mount | grep serviceaccount
+
+#check token of SA on a pod
+kubectl -n one exec -it pod-one -- cat /var/run/secrets/kubernetes.io/serviceaccount/token
+
+# to label a node:
+k label node cluster1-node1 security=apparmor
+
+#create dry-run yaml for deployment:
+k create deploy apparmor --image=nginx:1.19.2 $do > 9_deploy.yaml
+
+# scale down deployment:
+k -n team-yellow scale deploy collector1 --replicas 0
+
+# create role
+k -n applications create role smoke --verb create,delete --resource pods,deployments,sts
+
+# create role-binding
+k -n applications create rolebinding smoke --role smoke --user smoke
+
+# create role-bindin with cluster-rol
+k -n kube-public create rolebinding smoke-view --clusterrole view --user smoke

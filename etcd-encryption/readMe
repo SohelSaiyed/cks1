@@ -1,0 +1,35 @@
+1. Add a new volume and volumeMount in /etc/kubernetes/manifests/kube-apiserver.yaml, so that the container can access the file.
+
+2. Pass the new file as argument: --encryption-provider-config=/etc/kubernetes/etcd/ec.yaml
+
+spec:
+  containers:
+  - command:
+    - kube-apiserver
+...
+    - --encryption-provider-config=/etc/kubernetes/etcd/ec.yaml
+...
+    volumeMounts:
+    - mountPath: /etc/kubernetes/etcd
+      name: etcd
+      readOnly: true
+...
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes/etcd
+      type: DirectoryOrCreate
+    name: etcd
+...
+
+3. 
+Wait till apiserver was restarted:
+
+4. 
+watch crictl ps
+
+5. recret existing secret
+kubectl -n one get secrets -o json | kubectl replace -f -
+
+6. access secret using etcd
+ETCDCTL_API=3 etcdctl --cert /etc/kubernetes/pki/apiserver-etcd-client.crt --key /etc/kubernetes/pki/apiserver-etcd-client.key --cacert /etc/kubernetes/pki/etcd/ca.crt get /registry/secrets/one/s1
+

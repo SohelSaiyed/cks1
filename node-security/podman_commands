@@ -1,0 +1,9 @@
+# run container:
+podman run --name app1 -d nginx:alpine sleep infinity
+
+podman exec app1 ps aux
+
+# run second container using first container PID
+podman run --name app2 --pid=container:app1 -d nginx:alpine sleep infinity
+
+

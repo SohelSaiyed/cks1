@@ -1,0 +1,17 @@
+# fine the port
+1. # using netstat
+apt install net-tools
+netstat -tulpan | grep 1234
+
+or
+
+# using lsof
+lsof -i :1234
+
+
+2. Find pull path 
+ls -l /proc/<PID>/exe # use your ID instead
+
+3. kill and delete 
+kill <PID> # use your ID instead
+rm /usr/bin/app1

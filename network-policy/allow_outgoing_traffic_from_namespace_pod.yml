@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: client-egress
+  namespace: test
+spec:
+  podSelector:
+    matchLabels:
+      app: client # podselector from which traffic will be alllowed
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+      - namespaceSelector:
+          matchLabels:
+            project: test #namespace label to which traffic allowed
+        podSelector:
+          matchLabels:
+            app: nginx #pod label to which traffic allowd
+    ports:
+    - protocol: TCP
+      port: 80 #port on which traffic is allowd.

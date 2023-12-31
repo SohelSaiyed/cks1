@@ -1,0 +1,5 @@
+# to install 
+RUN apk update && apk add vim nginx>=1.18.0
+
+# to add user, group
+RUN addgroup -S myuser && adduser -S myuser -G myuser

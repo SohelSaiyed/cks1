@@ -1,0 +1,24 @@
+#create cert for user
+openssl genrsa -out ${USER}.key 2048
+openssl req -new -key ${USER}.key -out ${USER}.csr -subj "/CN=${USER}/O=devops"
+cat ${USER}.csr | base64
+
+#siging cert for user
+export CLUSTER_NAME=$(basename "$PWD")
+export CLUSTER_API_HOST="${CLUSTER_NAME}-k8s-api.localnet"
+kubectl config set-credentials ${CLUSTER_NAME} --client-key=${USER}.key --client-certificate=${USER}.crt --embed-certs=true
+kubectl config set-context ${CLUSTER_NAME} --cluster=${CLUSTER_NAME} --user=${CLUSTER_NAME}
+kubectl config set-cluster ${CLUSTER_NAME} --server=https://${CLUSTER_API_HOST}:6443 --insecure-skip-tls-verify=true
+kubectl config use-context ${CLUSTER_NAME}
+kubectl cluster-info
+
+
+# get cluster context
+k config get-contexts # copy by hand
+
+k config get-contexts -o name > /opt/course/1/contexts
+
+#To get certificate of kubeconfig 
+k config view --raw
+or
+k config view --raw -ojsonpath="{.users[2].user.client-certificate-data}" | base64 -d > /opt/course/1/cert

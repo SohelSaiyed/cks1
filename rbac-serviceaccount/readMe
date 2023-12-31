@@ -1,0 +1,10 @@
+#force re-apply yaml
+k -f /opt/ks/pod-one.yaml apply
+
+# check mount of sa on the pod
+kubectl -n one exec -it pod-one -- mount | grep serviceaccount
+
+#check token of SA on a pod
+kubectl -n one exec -it pod-one -- cat /var/run/secrets/kubernetes.io/serviceaccount/token
+
+

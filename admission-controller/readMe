@@ -1,0 +1,28 @@
+# Steps for webhook image scan
+1. create dir at : sudo mkdir /etc/kubernetes/admission-control
+2. create a CA cert for the webhoot admission controler
+3. create admission control file: 
+vi /etc/kubernetes/admission-control/admission-control.conf
+4. create the kube-config file which is referenced in admission-control.conf:
+vi /etc/kubernetes/admission-control/imagepolocywebhook_backend.kubeconfig
+5. enable admission-control plugin:
+sudo vi /etc/kubernetes/manifests/kube-apiserver.yaml
+ # Find the line that starts with  --enable-admission-plugins  and add  ImagePolicyWebhook  to the list:
+- --enable-admission-plugins=NodeRestriction,ImagePolicyWebhook
+# Add a new line after  - kube-apiserver  to reference the admission control config:
+ - --admission-control-config-file=/etc/kubernetes/admission-control/admission-control.conf
+  # kubeapi wont be able to see the file added to config previous line so have to add volume below.
+# Under the  volumes  section, add a volume to mount the admission control config directory:
+   volumes:   
+   - name: admission-control     
+     hostPath:      
+       path: /etc/kubernetes/admission-control       
+       type: DirectoryOrCreate
+  
+   volumeMounts:
+   - name: admission-control       
+     mountPath: /etc/kubernetes/admission-control       
+     readOnly: true
+
+6. create test.pod
+vi imagepolicy-busybox-pod.yml

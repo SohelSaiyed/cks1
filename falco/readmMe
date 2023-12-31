@@ -1,0 +1,36 @@
+#check falco log
+cat /var/log/syslog | grep falco | grep shell
+
+#add new Falco rule:
+1. cd /etc/falco/
+
+2. cp falco_rules.yaml falco_rules.local.yaml
+
+3. vim falco_rules.local.yaml
+
+4. service falco restart
+
+5. k exec -it pod -- sh
+
+6. cat /var/log/syslog | grep falco | grep shell
+or 
+sudo journalctl -fu falco
+
+
+# To run falco rule file(imp): 
+sudo falco -r <falco-rule-file-name>.yml -M 45
+
+
+# to change falco log location:
+Edit the file /etc/falco/falco.yaml to change the output channel. Disable standard output.
+
+file_output:
+  enabled: true
+  keep_alive: false
+  filename: /var/log/falco.log
+
+stdout_output:
+  enabled: false
+
+#to check all falco field and command 
+falco --list 

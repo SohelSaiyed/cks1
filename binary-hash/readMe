@@ -1,0 +1,28 @@
+# download
+VERSION=$(kubelet --version | cut -d ' ' -f2)
+wget https://dl.k8s.io/$VERSION/kubernetes-server-linux-amd64.tar.gz
+tar xzf kubernetes-server-linux-amd64.tar.gz
+
+# compare hashes
+whereis kubelet
+sha512sum /usr/bin/kubelet
+sha512sum kubernetes/server/bin/kubelet
+
+# see that both binaries show the same version although different hashes
+kubernetes/server/bin/kubelet --version
+/usr/bin/kubelet --version
+
+# to check binary
+1. sha512sum kube-controller-manager > compare
+2. vim compare # check manually by adding binary given in question
+3. cat compare | uniq
+or 
+# add the binary to two files and do vim diff to compare
+vimdiff -o <file1> <file2>
+
+# check:
+# check sha for the binary file:
+- kubelet: 
+  * kubectl version --short --client
+  * curl -LO "https://dl.k8s.io/v<version>/bin/linux/amd64/kubectl.sha256"
+  * echo "$(<kubectl.sha256) /usr/bin/kubectl" | sha256sum --check 

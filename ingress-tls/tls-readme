@@ -1,0 +1,18 @@
+# create tls certificate
+openssl req -nodes -new -x509 -keyout tls-ingress.key -out tls-ingress.crt -subj "/CN=ingress.test"
+
+# create tls secret:
+kubectl create secret tls <secret-name> --cert=<certname>.crt --key=<keyname>.key -n <namespace>
+
+#create tls-ingress:
+kubectl create ingress simple --rule="foo.com/bar=svc1:8080,tls=my-cert"  --dry-run -o yaml
+
+# decode base64 
+echo "encoded-string" | base64 -d
+
+
+#Verify ingress-tls working
+curl -m1 -kvI https://<host>:30443/<path> 2>&1 | grep subject | grep <host>
+example:
+curl -m1 -kvI https://world.universe.mine:30443/europe 2>&1 | grep subject | grep world.universe.mine
+

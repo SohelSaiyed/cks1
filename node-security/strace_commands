@@ -1,0 +1,13 @@
+# see which process running prod and commands:
+strace kill -9 1234 2>&1 | grep 1234
+strace kill -15 1234 2>&1 | grep 1234
+
+#strace to find which kind of call kubeapi performs:
+1. find the apiserver process:
+   ps aux | grep kube-apiserver
+2. use strace and pass the PID
+strace -p 19890 -f # use your PID
+## we use -f for "follow forks"
+
+3. Let's count and summarise
+strace -p 19890 -f -cw # use your PID

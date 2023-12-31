@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    name: myapp
+spec:
+  containers:
+  - name: myapp
+    image: <Image>
+    securityContext:
+      privileged: true #container will run in priviledge mode.
+    ports:
+      - containerPort: <Port>

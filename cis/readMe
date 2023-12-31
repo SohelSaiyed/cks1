@@ -1,0 +1,14 @@
+#run kube-bench against node
+kube-bench run --targets master
+
+#run kube-bench for specific code check 
+kube-bench run --targets master --check 1.2.20 -A 3
+
+or 
+kube-bench run --targets master --check 1.2.20 -B 3
+
+# run against worker node:
+kube-bench run --targets=node
+
+# to check permission level on kubelet config fie:
+stat -c %a /var/lib/kubelet/config.yaml
