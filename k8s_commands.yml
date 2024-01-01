@@ -42,3 +42,9 @@ k -n applications create rolebinding smoke --role smoke --user smoke
 
 # create role-bindin with cluster-rol
 k -n kube-public create rolebinding smoke-view --clusterrole view --user smoke
+
+# create clusterrole:
+kubectl create clusterrole pod-reader --verb=get,list,watch --resource=pods
+
+# create clusterrolebinding
+kubectl create clusterrolebinding cluster-admin --clusterrole=cluster-admin --user=user1 --user=user2 --group=group1
