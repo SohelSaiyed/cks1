@@ -7,4 +7,8 @@ kubectl -n one exec -it pod-one -- mount | grep serviceaccount
 #check token of SA on a pod
 kubectl -n one exec -it pod-one -- cat /var/run/secrets/kubernetes.io/serviceaccount/token
 
+# access secrets
+➜ k auth can-i list secrets --as gianna
 
+# access secrets
+➜ k auth can-i get secrets --as gianna
